@@ -1,76 +1,91 @@
-# Py-SIMPLE
+# Python Incompressible Flow Solvers (Finite Volume Method)
 
-A 2D Finite Volume Method (FVM) solver for incompressible, steady-state flows, written in Python with NumPy. This project implements the **SIMPLE (Semi-Implicit Method for Pressure Linked Equations)** algorithm on a staggered grid.
+![Language](https://img.shields.io/badge/Language-Python-blue.svg)
+![Libraries](https://img.shields.io/badge/Libraries-NumPy%20%7C%20Matplotlib-orange.svg)
+![Methods](https://img.shields.io/badge/Methods-FVM%20%7C%20SIMPLE%20%7C%20Artificial%20Compressibility-red.svg)
 
-The solver is structured to be modular and can be easily configured to solve different fluid dynamics problems. Two example cases are provided:
-1.  **Laminar Channel Flow:** Fully developed flow entering a rectangular channel.
-2.  **Lid-Driven Cavity:** A classic CFD benchmark problem.
+This repository contains custom, from-scratch Python solvers for the 2D incompressible Navier-Stokes equations. The project demonstrates the implementation of fundamental CFD principles and advanced numerical methods for solving classic fluid dynamics benchmark problems, without relying on external CFD libraries.
 
-This project demonstrates the implementation of core CFD algorithms from first principles, without relying on external CFD libraries.
+The primary goal is to showcase a deep, first-principles understanding of solver architecture, numerical schemes, and validation techniques.
 
-## Features
+## Core Numerical Methods Implemented
 
--   **Finite Volume Discretization:** The solver is based on the integral form of the governing equations.
--   **Staggered Grid:** Velocities are stored on cell faces, and pressure is stored at cell centers to prevent pressure-velocity decoupling.
--   **SIMPLE Algorithm:** An iterative algorithm for coupling the pressure and velocity fields.
--   **Hybrid Differencing Scheme:** Used for discretizing convective terms, providing stability.
--   **Line-by-Line TDMA Solver:** A Tri-Diagonal Matrix Algorithm is used to solve the discretized algebraic equations.
--   **Modular, Object-Oriented Design:** The code is structured into classes for the grid and solver, making it clean and extensible.
--   **Post-processing:** Includes scripts for generating contour plots of velocity and pressure, as well as streamlines.
+This collection of solvers demonstrates proficiency across a range of essential CFD techniques:
 
-## Numerical Method
+*   **Discretization:** Cell-centered **Finite Volume Method (FVM)** on structured grids.
+*   **Grid Systems:**
+    *   **Staggered Grid:** To prevent pressure-velocity decoupling and avoid spurious checkerboard pressure fields.
+    *   **Stretched Curvilinear Grid:** For efficient mesh clustering in regions with high gradients (e.g., near walls and steps).
+*   **Pressure-Velocity Coupling Algorithms:**
+    *   **SIMPLE Algorithm:** The classic Semi-Implicit Method for Pressure-Linked Equations, an iterative segregation-based approach.
+    *   **Artificial Compressibility Method:** A pseudo-time marching method that allows the use of explicit schemes (like Runge-Kutta) for incompressible flow.
+*   **Schemes:**
+    *   **Power-Law Scheme:** For robust and stable discretization of convection-diffusion terms.
+    *   **2nd-Order Central Differencing:** For spatial discretization of fluxes.
+*   **Stability & Time-Stepping:**
+    *   **4th-Order Artificial Dissipation:** To suppress numerical oscillations and maintain stability in convection-dominated flows.
+    *   **4th-Order Low-Storage Runge-Kutta (LSRK4):** For high-accuracy explicit pseudo-time integration with optimized memory usage.
+*   **Linear System Solvers:**
+    *   **Line-by-Line TDMA (Thomas Algorithm):** For solving the resulting algebraic equations.
+    *   **Strongly Implicit Procedure (SIP):** A combination of Successive Under-Relaxation and TDMA.
 
-The solver follows the standard SIMPLE algorithm for steady-state flows:
-1.  Guess the pressure field, P*.
-2.  Solve the momentum equations (for u* and v*) using the guessed pressure.
-3.  Solve the pressure-correction equation, which is derived from the continuity equation, to find the pressure correction, P'.
-4.  Correct the pressure field: P = P* + α_p * P'.
-5.  Correct the face velocities to satisfy continuity: u = u* + u' and v = v* + v'.
-6.  Repeat from step 2 until the solution residuals fall below a specified tolerance.
+---
 
-## Project Structure
-├── src/ # Source code modules
-│ ├── fvm_solver.py # The main Solver class
-│ ├── grid.py # StaggeredGrid class
-│ ├── case_setup.py # Boundary conditions and properties
-│ └── postprocessing.py # Plotting functions
-├── main_channel.py # Main script for the Channel Flow case
-├── main_cavity.py # Main script for the Lid-Driven Cavity case
-└── README.md
+## Showcased Simulations & Validations
+
+### 1. Laminar Channel Flow (with Heat Transfer)
+
+This case simulates the developing flow of viscous oil (Re=200) in a 2D channel, including the conjugate heat transfer problem. It serves as a validation for the **SIMPLE algorithm**.
+
+![`U Contours for Channel Flow`](ch_u_ctr.png)
+
+*Figure 3: U velocity contours at Re=200
+
+![`V Countours for Channel Flow`](ch_v_ctr.png)
+
+*Figure 4: U velocity contours at Re=200
+
+**Results & Validation:**
+The solver correctly captures the development of the parabolic velocity profile from a uniform inlet. Crucially, the calculated Fanning friction factor converges to the theoretical value of `24/Re = 0.12` for fully developed flow between parallel plates.
+
+### 2. Lid-Driven Cavity Flow
+
+This classic CFD benchmark simulates the vortex formation within a square cavity where the top lid moves at a constant velocity. It is an excellent test for the solver's robustness and accuracy in handling strong vortical flows.
+
+![`U Contours for Lid-Driven Cavity`](cavity_u_ctr.png)
+
+*Figure 3: U velocity contours at Re=200
+
+![`V Countours for Lid-Driven Cavity`](cavity_v_ctr.png)
+
+*Figure 4: U velocity contours at Re=200
+
 
 ## How to Run
 
 ### Prerequisites
 
--   Python 3.x
--   NumPy
--   Matplotlib
+*   Python 3.x
+*   NumPy
+*   Matplotlib
 
 You can install the required packages using pip:
 ```sh
 pip install numpy matplotlib
 ```
-Execution
-To run a simulation, execute one of the main scripts from the root directory of the project.
-To run the Channel Flow simulation:
-code
-Sh
+
+### Execution
+
+To run a simulation, execute one of the main scripts from the root directory.
+
+**To run the Channel Flow simulation:**
+```sh
 python main_channel.py
-To run the Lid-Driven Cavity simulation:
-code
-Sh
-python main_cavity.py
-The script will print the residuals at regular intervals. Once the solution converges, it will automatically generate and save plot images (u_velocity_contour.png, streamlines.png, etc.) in the root directory.
-Sample Results (Channel Flow)
-Below are sample output plots for a converged channel flow simulation at Re=200.
-U-Velocity Contour
-![alt text](u_velocity_contour.png)
+```
 
-The plot shows the development of the parabolic velocity profile along the channel.
-Streamlines
-![alt text](streamlines.png)
+**To run the Backward-Facing Step simulation:**
+```sh
+python main_bfs.py
+```
 
-The streamlines are parallel, as expected for a fully-developed channel flow.
-code
-Code
-**Note:** You will need to run the code to generate your own `u_velocity_contour.png` and `streamlines.png` files and place them in the root directory for the images to show up in the README.
+The scripts will print convergence residuals to the console. Upon completion, plot images (e.g., `u_contour.png`, `streamlines.png`) will be saved to the root directory.
