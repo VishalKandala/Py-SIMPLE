@@ -39,11 +39,11 @@ This case simulates the developing flow of viscous oil (Re=200) in a 2D channel,
 
 ![`U Contours for Channel Flow`](ch_u_ctr.png)
 
-*Figure 3: U velocity contours at Re=200
+*Figure 3: U velocity contours at Re=200*
 
 ![`V Countours for Channel Flow`](ch_v_ctr.png)
 
-*Figure 4: U velocity contours at Re=200
+*Figure 4: U velocity contours at Re=200*
 
 **Results & Validation:**
 The solver correctly captures the development of the parabolic velocity profile from a uniform inlet. Crucially, the calculated Fanning friction factor converges to the theoretical value of `24/Re = 0.12` for fully developed flow between parallel plates.
@@ -54,11 +54,11 @@ This classic CFD benchmark simulates the vortex formation within a square cavity
 
 ![`U Contours for Lid-Driven Cavity`](cavity_u_ctr.png)
 
-*Figure 3: U velocity contours at Re=200
+*Figure 3: U velocity contours at Re=200*
 
 ![`V Countours for Lid-Driven Cavity`](cavity_v_ctr.png)
 
-*Figure 4: U velocity contours at Re=200
+*Figure 4: U velocity contours at Re=200*
 
 
 ## How to Run
