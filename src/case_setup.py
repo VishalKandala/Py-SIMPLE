@@ -44,7 +44,8 @@ def apply_boundary_conditions_channel(solver):
 def apply_boundary_conditions_cavity(solver):
     """Applies boundary conditions for a lid-driven cavity case."""
     grid = solver.grid
-    u_lid = 1.0 # Lid velocity
+    # Get the lid velocity from the solver object, where it was placed by main_cavity.py
+    u_lid = solver.U_lid 
     
     # --- Velocity BCs (all walls are no-slip, except top lid) ---
     # U-velocity
